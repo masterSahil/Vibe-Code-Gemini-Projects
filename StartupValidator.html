@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ValidatR - Startup Idea Validation</title>
+    <style>
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-card: #171717;
+            --primary: #10b981;
+            --primary-glow: rgba(16, 185, 129, 0.2);
+            --text-main: #fafafa;
+            --text-muted: #a3a3a3;
+            --border: #262626;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+
+        body { background-color: var(--bg-dark); color: var(--text-main); line-height: 1.6; }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 2rem; }
+
+        header { padding: 2rem 0; display: flex; justify-content: space-between; align-items: center; }
+        
+        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; color: var(--text-main); text-decoration: none; }
+        .logo span { color: var(--primary); }
+
+        .hero { text-align: center; padding: 4rem 0 3rem; }
+        .hero h1 { font-size: 3.5rem; line-height: 1.1; margin-bottom: 1rem; letter-spacing: -1px; }
+        .hero p { color: var(--text-muted); font-size: 1.2rem; max-width: 600px; margin: 0 auto 2rem; }
+
+        .validator-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px var(--primary-glow);
+        }
+
+        textarea {
+            width: 100%;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 1rem;
+            border-radius: 8px;
+            min-height: 120px;
+            font-size: 1.1rem;
+            resize: vertical;
+            margin-bottom: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus { border-color: var(--primary); }
+
+        .btn {
+            background: var(--primary);
+            color: #000;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* Report Results */
+        .report {
+            display: none;
+            margin-top: 3rem;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .report-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
+
+        .report-card h3 { color: var(--primary); margin-bottom: 1rem; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+        .report-card ul { list-style: none; }
+        .report-card li { margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); color: var(--text-muted); }
+        .report-card li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        
+        .score { font-size: 3rem; font-weight: 800; line-height: 1; margin-bottom: 0.5rem; }
+
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) { .hero h1 { font-size: 2.5rem; } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <a href="#" class="logo">Validat<span>R</span></a>
+        </header>
+
+        <section class="hero">
+            <h1>Don't build products <br>nobody wants.</h1>
+            <p>Describe your startup idea below. Our AI will instantly analyze market viability, identify competitors, and suggest revenue models.</p>
+        </section>
+
+        <div class="validator-box">
+            <textarea id="ideaInput" placeholder="e.g., An app that uses AI to generate personalized workout plans based on the user's local grocery store inventory..."></textarea>
+            <button class="btn" id="analyzeBtn" onclick="runAnalysis()">Analyze Market Potential</button>
+        </div>
+
+        <div class="loader" id="loader">Crunching market data...</div>
+
+        <div class="report" id="report">
+            <h2 style="margin-bottom: 0.5rem;">Market Analysis Report</h2>
+            <p style="color: var(--text-muted);">Generated instantly based on your pitch.</p>
+
+            <div class="report-grid">
+                <div class="report-card">
+                    <h3>Viability Score</h3>
+                    <div class="score">78/100</div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Moderate to High potential. Strong niche appeal, but user acquisition costs may be high initially.</p>
+                </div>
+                <div class="report-card">
+                    <h3>Identified Competitors</h3>
+                    <ul>
+                        <li><strong>Fitbod</strong> - Similar algorithmic workouts.</li>
+                        <li><strong>MyFitnessPal</strong> - Dominates the nutrition space.</li>
+                        <li><strong>Strong</strong> - High retention in tracking.</li>
+                    </ul>
+                </div>
+                <div class="report-card">
+                    <h3>Revenue Models</h3>
+                    <ul>
+                        <li><strong>Freemium:</strong> Free basic tracking, paid AI generation.</li>
+                        <li><strong>B2B Partnerships:</strong> Affiliate deals with local grocers.</li>
+                        <li><strong>One-time DLC:</strong> Specialized 12-week programs.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function runAnalysis() {
+            const input = document.getElementById('ideaInput').value;
+            if (input.trim().length < 10) {
+                alert("Please describe your idea in a bit more detail (at least 10 characters).");
+                return;
+            }
+
+            const btn = document.getElementById('analyzeBtn');
+            const loader = document.getElementById('loader');
+            const report = document.getElementById('report');
+
+            // Reset state
+            btn.disabled = true;
+            report.style.display = 'none';
+            loader.style.display = 'block';
+
+            // Simulate API call
+            setTimeout(() => {
+                loader.style.display = 'none';
+                report.style.display = 'block';
+                btn.disabled = false;
+                
+                // Smooth scroll to results
+                report.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
