@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevLaunch - Student Project Finder</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        /* Hero Section */
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 5rem 2rem 3rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #fff, var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 2.5rem auto;
+        }
+
+        /* Main Content & Filters */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem 5rem 2rem;
+        }
+
+        .filter-section {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .filter-group select {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .filter-group select:focus {
+            border-color: var(--accent);
+        }
+
+        /* Project Grid */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .project-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+        }
+
+        .card-top {
+            margin-bottom: 1.5rem;
+        }
+
+        .badge-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            text-transform: uppercase;
+        }
+
+        .badge.beginner { background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .badge.intermediate { background-color: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .badge.advanced { background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        .badge.skill { background-color: rgba(59, 130, 246, 0.1); color: var(--accent); }
+
+        .project-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .project-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tech-tag {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border);
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .card-bottom {
+            margin-top: auto;
+        }
+
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .github-link:hover {
+            color: var(--accent);
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.25rem; }
+            .filter-section { flex-direction: column; align-items: stretch; }
+            .project-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">🚀 Dev<span>Launch</span></a>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>Stop planning. Start building.</h1>
+        <p>Find vetted, production-grade project ideas tailored to your exact skills and experience level.</p>
+    </section>
+
+    <main class="main-container">
+        <div class="filter-section">
+            <div class="filter-group">
+                <label for="skill-filter">Primary Skill</label>
+                <select id="skill-filter">
+                    <option value="all">All Skills</option>
+                    <option value="frontend">Frontend Development</option>
+                    <option value="backend">Backend Development</option>
+                    <option value="fullstack">Fullstack Systems</option>
+                    <option value="mobile">Mobile Apps</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="difficulty-filter">Difficulty Level</label>
+                <select id="difficulty-filter">
+                    <option value="all">All Levels</option>
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="project-grid" id="project-grid">
+            </div>
+    </main>
+
+    <script>
+        // Internal Data Repository
+        const projects = [
+            {
+                title: "Personal Portfolio Platform",
+                description: "A lightning-fast, responsive portfolio to showcase your future engineering work. Features seamless theme toggling and structural SEO optimizations.",
+                skill: "frontend",
+                difficulty: "beginner",
+                techStack: ["HTML5", "CSS3", "JavaScript", "Vite"],
+                githubMock: "https://github.com/example/student-portfolio-template"
+            },
+            {
+                title: "RESTful Task Management API",
+                description: "Build a production-ready task manager handling user authentication, CRUD data operations, persistence, and secure token access.",
+                skill: "backend",
+                difficulty: "intermediate",
+                techStack: ["Node.js", "Express", "MongoDB", "JWT"],
+                githubMock: "https://github.com/example/todo-api-backend"
+            },
+            {
+                title: "Real-time Collaborative Whiteboard",
+                description: "An advanced canvas platform allowing concurrent users to sync coordinates over WebSockets. Great for learning distributed real-time events.",
+                skill: "fullstack",
+                difficulty: "advanced",
+                techStack: ["React", "Socket.io", "Node.js", "Redis"],
+                githubMock: "https://github.com/example/collab-board-sync"
+            },
+            {
+                title: "Local Weather & Mapping Dashboard",
+                description: "Practice consuming asynchronous external REST architectures by pulling geographic telemetry and visual rendering configurations.",
+                skill: "frontend",
+                difficulty: "beginner",
+                techStack: ["JavaScript", "TailwindCSS", "OpenWeather API"],
+                githubMock: "https://github.com/example/weather-dashboard"
+            },
+            {
+                title: "E-Commerce Microservice Cart",
+                description: "An isolated backend engine handling stock checking, atomic database item reservation, validation checks, and checkout structures.",
+                skill: "backend",
+                difficulty: "advanced",
+                techStack: ["Go", "PostgreSQL", "Docker", "gRPC"],
+                githubMock: "https://github.com/example/grpc-cart-engine"
+            },
+            {
+                title: "Cross-Platform Cryptotracker",
+                description: "A clean mobile ecosystem fetching and charting asynchronous market dynamics alongside native user watchlist alerts.",
+                skill: "mobile",
+                difficulty: "intermediate",
+                techStack: ["Flutter", "Dart", "CoinGecko API"],
+                githubMock: "https://github.com/example/crypto-mobile-tracker"
+            }
+        ];
+
+        const skillFilter = document.getElementById('skill-filter');
+        const difficultyFilter = document.getElementById('difficulty-filter');
+        const projectGrid = document.getElementById('project-grid');
+
+        function renderProjects() {
+            const selectedSkill = skillFilter.value;
+            const selectedDifficulty = difficultyFilter.value;
+
+            // Filter logic
+            const filtered = projects.filter(project => {
+                const matchesSkill = selectedSkill === 'all' || project.skill === selectedSkill;
+                const matchesDifficulty = selectedDifficulty === 'all' || project.difficulty === selectedDifficulty;
+                return matchesSkill && matchesDifficulty;
+            });
+
+            // Clear Grid
+            projectGrid.innerHTML = '';
+
+            if (filtered.length === 0) {
+                projectGrid.innerHTML = `<div class="no-results">No projects found matching your chosen criteria. Try adjusting your filters!</div>`;
+                return;
+            }
+
+            // UI Generation Loop
+            filtered.forEach(project => {
+                const card = document.createElement('div');
+                card.className = 'project-card';
+
+                const techTagsHTML = project.techStack.map(tech => `<span class="tech-tag">${tech}</span>`).join('');
+
+                card.innerHTML = `
+                    <div class="card-top">
+                        <div class="badge-container">
+                            <span class="badge ${project.difficulty}">${project.difficulty}</span>
+                            <span class="badge skill">${project.skill}</span>
+                        </div>
+                        <h3 class="project-title">${project.title}</h3>
+                        <p class="project-desc">${project.description}</p>
+                        <div class="tech-stack">
+                            ${techTagsHTML}
+                        </div>
+                    </div>
+                    <div class="card-bottom">
+                        <a href="${project.githubMock}" target="_blank" class="github-link">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                            View Reference Blueprint
+                        </a>
+                    </div>
+                `;
+                projectGrid.appendChild(card);
+            });
+        }
+
+        // Event listeners for active updates
+        skillFilter.addEventListener('change', renderProjects);
+        difficultyFilter.addEventListener('change', renderProjects);
+
+        // Initial paint
+        renderProjects();
+    </script>
+</body>
+</html>
