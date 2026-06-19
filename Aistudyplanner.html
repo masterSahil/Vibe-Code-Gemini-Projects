@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrainPlan AI - Smart Study Planner</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #f8fafc;
+            --text-dark: #0f172a;
+            --text-light: #64748b;
+            --white: #ffffff;
+            --success: #22c55e;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--secondary);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* Navbar */
+        nav {
+            background-color: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .cta-btn {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-decoration: none;
+        }
+
+        .cta-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Hero Section */
+        .hero {
+            max-width: 900px;
+            margin: 4rem auto;
+            text-align: center;
+            padding: 0 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        .hero h1 span {
+            color: var(--primary);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            margin-inline: auto;
+        }
+
+        /* Features Grid */
+        .features {
+            max-width: 1100px;
+            margin: 0 auto 5rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            text-align: left;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-desc {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* Interactive Demo Section */
+        .demo-section {
+            max-width: 800px;
+            margin: 0 auto 5rem auto;
+            background: var(--white);
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+        }
+
+        .demo-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+        }
+
+        input {
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+        }
+
+        .generate-btn {
+            width: 100%;
+            background-color: var(--text-dark);
+            color: var(--white);
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-bottom: 2rem;
+        }
+
+        .generate-btn:hover {
+            background-color: #000;
+        }
+
+        /* Generated Timetable */
+        .timetable {
+            display: none; /* Hidden until generated */
+            border-top: 2px dashed var(--border);
+            padding-top: 2rem;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .day-card {
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .day-info h4 {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+        }
+
+        .day-info p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .status-badge {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-badge.review {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .input-group { flex-direction: column; }
+            .demo-section { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-content">
+            <a href="#" class="logo">🧠 BrainPlan <span>AI</span></a>
+            <a href="#" class="cta-btn">Sign In</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>Stop planning. <span>Start studying.</span></h1>
+        <p>You waste hours building the perfect study schedule only to abandon it by Tuesday. Let our AI build, adapt, and track your syllabus so you can focus on acing your exams.</p>
+    </section>
+
+    <section class="features">
+        <div class="feature-card">
+            <div class="feature-icon">📅</div>
+            <h3 class="feature-title">Smart Scheduling</h3>
+            <p class="feature-desc">Just enter your subjects and exam dates. Our engine calculates exactly how many hours you need per topic.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📈</div>
+            <h3 class="feature-title">Progress Tracking</h3>
+            <p class="feature-desc">Log your daily study hours. The AI dynamically adjusts your future schedule if you fall behind or jump ahead.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🔔</div>
+            <h3 class="feature-title">Spaced Revision</h3>
+            <p class="feature-desc">Never forget what you read. Automated alerts prompt you to review older topics right before the forgetting curve hits.</p>
+        </div>
+    </section>
+
+    <section class="demo-section">
+        <h2 class="demo-title">Try the AI Engine</h2>
+        
+        <div class="input-group">
+            <div class="input-wrapper">
+                <label for="subject">Subject Name</label>
+                <input type="text" id="subject" placeholder="e.g., Organic Chemistry" value="Data Structures">
+            </div>
+            <div class="input-wrapper">
+                <label for="date">Exam Date</label>
+                <input type="date" id="date">
+            </div>
+        </div>
+        
+        <button class="generate-btn" onclick="generateTimetable()">Generate My Timetable</button>
+
+        <div class="timetable" id="timetable">
+            <h3 style="margin-bottom: 1.5rem; color: var(--primary);">Your AI-Optimized Plan</h3>
+            
+            <div id="plan-container">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Set default date to 14 days from today
+        const dateInput = document.getElementById('date');
+        const defaultDate = new Date();
+        defaultDate.setDate(defaultDate.getDate() + 14);
+        dateInput.value = defaultDate.toISOString().split('T')[0];
+
+        function generateTimetable() {
+            const subject = document.getElementById('subject').value || 'Your Subject';
+            const timetable = document.getElementById('timetable');
+            const container = document.getElementById('plan-container');
+            
+            // Show the timetable section
+            timetable.style.display = 'block';
+            
+            // Clear previous items
+            container.innerHTML = '';
+
+            // Generate mock schedule data
+            const schedule = [
+                { day: "Today", task: `Core Concepts: ${subject}`, status: "Deep Work", class: "" },
+                { day: "Tomorrow", task: `Practice Problems: ${subject}`, status: "Deep Work", class: "" },
+                { day: "Day 3", task: `Spaced Revision: ${subject}`, status: "Review", class: "review" },
+                { day: "Day 4", task: `Advanced Topics: ${subject}`, status: "Deep Work", class: "" }
+            ];
+
+            // Inject HTML
+            schedule.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'day-card';
+                card.innerHTML = `
+                    <div class="day-info">
+                        <h4>${item.day}</h4>
+                        <p>${item.task}</p>
+                    </div>
+                    <span class="status-badge ${item.class}">${item.status}</span>
+                `;
+                container.appendChild(card);
+            });
+        }
+    </script>
+</body>
+              </html>
