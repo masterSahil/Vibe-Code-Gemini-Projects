@@ -1,0 +1,34 @@
+- Local Service Marketplace
+Problem: Finding reliable local freelancers is difficult.
+Solution:
+
+Connect local designers, developers, tutors
+Reviews and ratings
+Location-based search
+
+- AI Website Feedback Tool
+Problem: Founders launch websites with poor UX.
+Solution:
+
+Upload URL
+UX audit
+Accessibility report
+Conversion optimization tips
+
+- College Placement Dashboard
+Problem: Students miss opportunities.
+Solution:
+
+Placement updates
+Internship alerts
+Company eligibility checker
+Application tracking
+
+- "Build In Public" Tracker
+Problem: Indie hackers struggle with consistency.
+Solution:
+
+Daily updates
+Progress charts
+Public roadmap
+Community feedback
