@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevRoast - Portfolio Reviewer</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-light: #64748b;
+            --accent: #6366f1;
+            --border: #e2e8f0;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --success: #22c55e;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+
+        body { background-color: var(--bg); color: var(--text-main); }
+
+        .navbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; font-weight: bold; font-size: 1.2rem; }
+        .navbar span { color: var(--accent); }
+
+        .main-container { max-width: 900px; margin: 4rem auto; padding: 0 2rem; }
+
+        .header-text { text-align: center; margin-bottom: 3rem; }
+        .header-text h1 { font-size: 2.8rem; margin-bottom: 1rem; }
+        .header-text p { color: var(--text-light); font-size: 1.1rem; }
+
+        .scan-box {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .scan-box input {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .scan-box input:focus { border-color: var(--accent); }
+
+        .scan-box button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .scan-box button:hover { background: #4f46e5; }
+
+        /* Dashboard Results */
+        .dashboard { display: none; animation: fadeIn 0.5s ease-in; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .metric-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 1rem;
+        }
+
+        .score-bad { border: 4px solid var(--error); color: var(--error); }
+        .score-ok { border: 4px solid var(--warning); color: var(--warning); }
+        .score-good { border: 4px solid var(--success); color: var(--success); }
+
+        .suggestions { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        .suggestions-header { background: #f1f5f9; padding: 1rem 1.5rem; font-weight: 600; border-bottom: 1px solid var(--border); }
+        
+        .issue-item { padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; gap: 1rem; align-items: flex-start; }
+        .issue-item:last-child { border-bottom: none; }
+        .issue-icon { font-size: 1.5rem; }
+        .issue-text h4 { margin-bottom: 0.25rem; }
+        .issue-text p { color: var(--text-light); font-size: 0.9rem; }
+
+        .scanning-ui { display: none; text-align: center; color: var(--text-light); padding: 2rem; font-family: monospace; }
+
+        @media (max-width: 600px) { .scan-box { flex-direction: column; } .scan-box button { padding: 1rem; } }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        Dev<span>Roast</span>
+    </nav>
+
+    <main class="main-container">
+        <div class="header-text">
+            <h1>Why did they ghost you?</h1>
+            <p>Run a harsh, automated technical audit on your developer portfolio. We check performance, SEO, accessibility, and design red flags.</p>
+        </div>
+
+        <div class="scan-box">
+            <input type="url" id="urlInput" placeholder="https://your-portfolio.dev" required>
+            <button onclick="startAudit()" id="scanBtn">Run Audit</button>
+        </div>
+
+        <div class="scanning-ui" id="scanningUi">
+            > Fetching DOM...<br>
+            > Running Lighthouse metrics...<br>
+            > Checking meta tags...<br>
+            > Analyzing color contrast...
+        </div>
+
+        <div class="dashboard" id="dashboard">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-circle score-bad">42</div>
+                    <h3>SEO Score</h3>
+                    <p style="color: var(--text-light); font-size: 0.85rem; margin-top: 0.5rem;">Missing crucial meta tags.</p>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-circle score-ok">78</div>
+                    <h3>Performance</h3>
+                    <p style="color: var(--text-light); font-size: 0.85rem; margin-top: 0.5rem;">Images are unoptimized.</p>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-circle score-good">95</div>
+                    <h3>Accessibility</h3>
+                    <p style="color: var(--text-light); font-size: 0.85rem; margin-top: 0.5rem;">Great ARIA labeling.</p>
+                </div>
+            </div>
+
+            <div class="suggestions">
+                <div class="suggestions-header">Actionable Fixes</div>
+                <div class="issue-item">
+                    <div class="issue-icon">🔴</div>
+                    <div class="issue-text">
+                        <h4>Missing Open Graph Tags</h4>
+                        <p>When recruiters share your link on Slack or LinkedIn, no preview image appears. Add `<meta property="og:image" content="...">` to your `<head>`.</p>
+                    </div>
+                </div>
+                <div class="issue-item">
+                    <div class="issue-icon">🟡</div>
+                    <div class="issue-text">
+                        <h4>Heavy Payload on First Load</h4>
+                        <p>Your hero image is a 4MB PNG. Convert it to WebP and set explicit width/height attributes to prevent layout shifts.</p>
+                    </div>
+                </div>
+                <div class="issue-item">
+                    <div class="issue-icon">🔵</div>
+                    <div class="issue-text">
+                        <h4>Generic Project Descriptions</h4>
+                        <p>Your project cards just say "Built with React". Recruiters want to know the *problem* you solved. Reframe it as: "Reduced load times by 20% using React and Vite."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function startAudit() {
+            const url = document.getElementById('urlInput').value;
+            if (!url) { alert("Please enter a valid URL."); return; }
+
+            const btn = document.getElementById('scanBtn');
+            const scanning = document.getElementById('scanningUi');
+            const dashboard = document.getElementById('dashboard');
+
+            btn.disabled = true;
+            btn.innerText = "Scanning...";
+            dashboard.style.display = "none";
+            scanning.style.display = "block";
+
+            // Simulate the scanning process
+            setTimeout(() => {
+                scanning.style.display = "none";
+                dashboard.style.display = "block";
+                btn.disabled = false;
+                btn.innerText = "Run Audit";
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
